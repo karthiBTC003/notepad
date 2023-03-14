@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Notepad</title>
+    <style>
+      .notepad {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border: 1px solid #ccc;
+        padding: 10px;
+        background-color: #fff;
+        z-index: 9999;
+      }
+
+      .title {
+        display: flex;
+        align-items: center;
+      }
+
+      .title-textarea {
+        flex: 1;
+        margin-right: 10px;
+      }
+
+      .text {
+        height: 200px;
+        width: 100%;
+        margin-bottom: 10px;
+        resize: none;
+      }
+
+      /* .button {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        padding: 10px;
+        margin-right: 10px;
+        cursor: pointer;
+      } */
+
+      .close {
+        background-color: #f44336;
+      }
+
+      /* .sidebarone{
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 200px;
+        padding: 10px;
+        background-color: #f2f2f2;
+        overflow-y: auto;
+        z-index: 9998;
+      } */
+
+      .note {
+        margin-bottom: 10px;
+        padding: 5px;
+        border: 1px solid #ccc;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+
+    <button onclick="openNotepad()">Open Notepad</button>
+    <div class="sidebarone"></div>
+
+
+
+
+    <script>
+   function openNotepad(titleText = '') {
+  // Create notepad elements
+  var notepad = document.createElement('div');
+  notepad.classList.add('notepad');
+  var title = document.createElement('div');
+  title.classList.add('title');
+  var titleTextArea = document.createElement('textarea');
+  titleTextArea.placeholder = 'Enter title...';
+  titleTextArea.classList.add('title-textarea');
+  titleTextArea.value = titleText;
+  title.appendChild(titleTextArea);
+  var text = document.createElement('textarea');
+  text.classList.add('text');
+  var saveButton = document.createElement('button');
+  saveButton.classList.add('button');
+  saveButton.textContent = 'Save';
+  saveButton.addEventListener('click', function () {
+    // Get title and text content
+    var titleText = titleTextArea.value;
+    var noteText = text.value;
+
+    // Create note element and add to sidebar
+    var note = document.createElement('div');
+    note.classList.add('note');
+    note.textContent = titleText;
+    note.setAttribute('title', noteText);
+    note.addEventListener('click', function () {
+      openNotepad(note.textContent);
+    });
+    document.querySelector('.sidebar').appendChild(note);
+
+    // Clear notepad and close it
+    titleTextArea.value = '';
+    text.value = '';
+    notepad.parentNode.removeChild(notepad);
+
+    // Save note in local storage
+    var notes = JSON.parse(localStorage.getItem('notes')) || [];
+    notes.push({ title: titleText, text: noteText });
+    localStorage.setItem('notes', JSON.stringify(notes));
+  });
+
+  var closeButton = document.createElement('button');
+  closeButton.classList.add('button');
+  closeButton.classList.add('close');
+  closeButton.textContent = 'Close';
+  closeButton.addEventListener('click', function () {
+    notepad.parentNode.removeChild(notepad);
+  });
+
+  // Add elements to notepad
+  title.appendChild(closeButton);
+  notepad.appendChild(title);
+  notepad.appendChild(text);
+  notepad.appendChild(saveButton);
+
+  // Add notepad to page
+  document.body.appendChild(notepad);
+
+  // Set focus to title textarea
+  titleTextArea.focus();
+}
+
+// Load notes from local storage and add to sidebar
+var notes = JSON.parse(localStorage.getItem('notes')) || [];
+var sidebar = document.querySelector('.sidebar');
+notes.forEach(function (note) {
+  var noteElem = document.createElement('div');
+  noteElem.classList.add('note');
+  noteElem.textContent = note.title;
+  noteElem.setAttribute('title', note.text);
+  noteElem.addEventListener('click', function () {
+    openNotepad(note.title);
+  });
+  sidebar.appendChild(noteElem);
+});
+
+
+    </script>
+  
+      
+      
+
+  </body>
+</html>
