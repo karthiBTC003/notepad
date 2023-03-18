@@ -1,160 +1,211 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Notepad</title>
-    <style>
-      .notepad {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        border: 1px solid #ccc;
-        padding: 10px;
-        background-color: #fff;
-        z-index: 9999;
-      }
-
-      .title {
-        display: flex;
-        align-items: center;
-      }
-
-      .title-textarea {
-        flex: 1;
-        margin-right: 10px;
-      }
-
-      .text {
-        height: 200px;
-        width: 100%;
-        margin-bottom: 10px;
-        resize: none;
-      }
-
-      /* .button {
-        background-color: #4CAF50;
-        color: white;
-        border: none;
-        padding: 10px;
-        margin-right: 10px;
-        cursor: pointer;
-      } */
-
-      .close {
-        background-color: #f44336;
-      }
-
-      /* .sidebarone{
-        position: fixed;
-        top: 0;
-        left: 0;
-        bottom: 0;
-        width: 200px;
-        padding: 10px;
-        background-color: #f2f2f2;
-        overflow-y: auto;
-        z-index: 9998;
-      } */
-
-      .note {
-        margin-bottom: 10px;
-        padding: 5px;
-        border: 1px solid #ccc;
-        cursor: pointer;
-      }
-    </style>
-  </head>
-  <body>
-
-    <button onclick="openNotepad()">Open Notepad</button>
-    <div class="sidebarone"></div>
-
-
-
-
-    <script>
-   function openNotepad(titleText = '') {
-  // Create notepad elements
-  var notepad = document.createElement('div');
-  notepad.classList.add('notepad');
-  var title = document.createElement('div');
-  title.classList.add('title');
-  var titleTextArea = document.createElement('textarea');
-  titleTextArea.placeholder = 'Enter title...';
-  titleTextArea.classList.add('title-textarea');
-  titleTextArea.value = titleText;
-  title.appendChild(titleTextArea);
-  var text = document.createElement('textarea');
-  text.classList.add('text');
-  var saveButton = document.createElement('button');
-  saveButton.classList.add('button');
-  saveButton.textContent = 'Save';
-  saveButton.addEventListener('click', function () {
-    // Get title and text content
-    var titleText = titleTextArea.value;
-    var noteText = text.value;
-
-    // Create note element and add to sidebar
-    var note = document.createElement('div');
-    note.classList.add('note');
-    note.textContent = titleText;
-    note.setAttribute('title', noteText);
-    note.addEventListener('click', function () {
-      openNotepad(note.textContent);
-    });
-    document.querySelector('.sidebar').appendChild(note);
-
-    // Clear notepad and close it
-    titleTextArea.value = '';
-    text.value = '';
-    notepad.parentNode.removeChild(notepad);
-
-    // Save note in local storage
-    var notes = JSON.parse(localStorage.getItem('notes')) || [];
-    notes.push({ title: titleText, text: noteText });
-    localStorage.setItem('notes', JSON.stringify(notes));
-  });
-
-  var closeButton = document.createElement('button');
-  closeButton.classList.add('button');
-  closeButton.classList.add('close');
-  closeButton.textContent = 'Close';
-  closeButton.addEventListener('click', function () {
-    notepad.parentNode.removeChild(notepad);
-  });
-
-  // Add elements to notepad
-  title.appendChild(closeButton);
-  notepad.appendChild(title);
-  notepad.appendChild(text);
-  notepad.appendChild(saveButton);
-
-  // Add notepad to page
-  document.body.appendChild(notepad);
-
-  // Set focus to title textarea
-  titleTextArea.focus();
+    <link rel="stylesheet" href="style.css" />
+<style>
+  body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
 }
 
-// Load notes from local storage and add to sidebar
-var notes = JSON.parse(localStorage.getItem('notes')) || [];
-var sidebar = document.querySelector('.sidebar');
-notes.forEach(function (note) {
-  var noteElem = document.createElement('div');
-  noteElem.classList.add('note');
-  noteElem.textContent = note.title;
-  noteElem.setAttribute('title', note.text);
-  noteElem.addEventListener('click', function () {
-    openNotepad(note.title);
-  });
-  sidebar.appendChild(noteElem);
+.container {
+  display: flex;
+  height: 100vh;
+}
+
+.sidebar {
+  width: 200px;
+  background-color: #f8f8f8;
+  padding: 10px;
+}
+
+.notepad-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.notepad {
+  width: 80%;
+  max-width: 600px;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.text {
+  width: 100%;
+  height: 300px;
+  resize: none;
+  border: none;
+  padding: 10px;
+  margin-bottom: 10px;
+  font-size: 16px;
+  line-height: 1.5;
+  box-shadow: inset 0px 0px 5px rgba(0, 0, 0, 0.1);
+}
+
+.save-button,
+.delete-button {
+  background-color: #4caf50;
+  color: #fff;
+  border: none;
+  padding: 10px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.delete-button {
+  background-color: #f44336;
+}
+
+.save-button:hover,
+.delete-button:hover {
+  background-color: #3e8e41;
+}
+
+button {
+  font-size: 16px;
+  margin-bottom: 10px;
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #4caf50;
+  color: #fff;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #3e8e41;
+}
+
+button:active {
+  background-color: #2e7d32;
+}
+
+</style>
+
+
+
+  </head>
+  <body>
+    <div class="container">
+      <div class="sidebar">
+        <button id="new-note">New Note</button>
+        <button id="clear-storage">Clear</button>
+      </div>
+      <div class="notepad-container">
+        <div class="notepad" hidden>
+          <div class="title"></div>
+          <textarea class="text" placeholder="Enter note here..."></textarea>
+          <button class="save-button">Save</button>
+          <button class="delete-button">Delete</button>
+        </div>
+      </div>
+    </div>
+    <script>
+      
+      // Retrieve notes from local storage
+var notes = JSON.parse(localStorage.getItem("notes")) || [];
+
+// Select elements
+var newNoteButton = document.getElementById("new-note");
+var clearStorageButton = document.getElementById("clear-storage");
+var notepadContainer = document.querySelector(".notepad-container");
+var notepadTitle = document.querySelector(".title");
+var notepadText = document.querySelector(".text");
+
+// Add event listeners
+newNoteButton.addEventListener("click", function() {
+  openNotepad("", "");
 });
 
+clearStorageButton.addEventListener("click", function() {
+  localStorage.removeItem("notes");
+  notes = [];
+  renderNotes();
+});
+
+notepadTitle.addEventListener("input", function() {
+  saveNote();
+});
+
+notepadText.addEventListener("input", function() {
+  saveNote();
+});
+
+// Render notes
+renderNotes();
+
+// Function to render notes in the sidebar
+function renderNotes() {
+  var sidebar = document.querySelector(".sidebar");
+  sidebar.innerHTML = "";
+
+  notes.forEach(function(note) {
+    var noteElement = document.createElement("div");
+    noteElement.classList.add("note");
+    noteElement.textContent = note.title;
+    noteElement.setAttribute("title", note.text);
+
+    var dateSpan = document.createElement("span");
+    dateSpan.classList.add("date");
+    dateSpan.textContent = new Date(note.date).toLocaleString();
+
+    noteElement.appendChild(dateSpan);
+    noteElement.addEventListener("click", function() {
+      openNotepad(note.title, note.text);
+    });
+
+    sidebar.appendChild(noteElement);
+  });
+}
+
+// Function to open a notepad with a given title and text
+function openNotepad(title, text) {
+  notepadTitle.value = title;
+  notepadText.value = text;
+}
+
+// Function to save a note to local storage
+function saveNote() {
+  var title = notepadTitle.value;
+  var text = notepadText.value;
+  var date = Date.now();
+
+  var note = {
+    title: title,
+    text: text,
+    date: date
+  };
+
+  var index = notes.findIndex(function(n) {
+    return n.title === title;
+  });
+
+  if (index === -1) {
+    notes.push(note);
+  } else {
+    notes[index] = note;
+  }
+
+  localStorage.setItem("notes", JSON.stringify(notes));
+
+  renderNotes();
+}
 
     </script>
-  
-      
-      
-
   </body>
 </html>
